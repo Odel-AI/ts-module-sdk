@@ -50,16 +50,16 @@ import { z } from 'zod';
  * ```
  */
 export const SuccessResponseSchema = <T extends z.ZodRawShape>(dataSchema: z.ZodObject<T>) =>
-	z.union([
-		z.object({
-			success: z.literal(true),
-			...dataSchema.shape,
-		}),
-		z.object({
-			success: z.literal(false),
-			error: z.string(),
-		}),
-	]);
+    z.union([
+        z.object({
+            success: z.literal(true),
+            ...dataSchema.shape
+        }),
+        z.object({
+            success: z.literal(false),
+            error: z.string()
+        })
+    ]);
 
 /**
  * Type helper to extract the success response type from a SuccessResponseSchema
@@ -104,6 +104,6 @@ export type ErrorResponse<T extends z.ZodTypeAny> = Extract<z.infer<T>, { succes
  * ```
  */
 export const SimpleSuccessSchema = z.union([
-	z.object({ success: z.literal(true) }),
-	z.object({ success: z.literal(false), error: z.string() }),
+    z.object({ success: z.literal(true) }),
+    z.object({ success: z.literal(false), error: z.string() })
 ]);

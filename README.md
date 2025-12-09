@@ -11,10 +11,10 @@ SDK for building Odel modules - full MCP protocol implementation with additional
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Odel Extensions](#odel-extensions)
-  - [Context](#context)
-  - [Error Handling](#error-handling)
-  - [Validators](#validators)
-  - [Response Schemas](#response-schemas)
+    - [Context](#context)
+    - [Error Handling](#error-handling)
+    - [Validators](#validators)
+    - [Response Schemas](#response-schemas)
 - [MCP Core Concepts](#mcp-core-concepts)
 - [Documentation](#documentation)
 - [License](#license)
@@ -44,66 +44,60 @@ This SDK has a **required peer dependency** on `zod` for schema validation.
 ```typescript
 import { McpServer } from '@odel/module-sdk/server';
 import { z } from 'zod';
-import {
-  extractToolContext,
-  getRequiredSecret,
-  ModuleError,
-  SuccessResponseSchema,
-  validators,
-} from '@odel/module-sdk/odel';
+import { extractToolContext, getRequiredSecret, ModuleError, SuccessResponseSchema, validators } from '@odel/module-sdk/odel';
 
 // Define your response schema
 const SendEmailResponseSchema = SuccessResponseSchema(
-  z.object({
-    messageId: z.string(),
-    sentAt: z.string(),
-  })
+    z.object({
+        messageId: z.string(),
+        sentAt: z.string()
+    })
 );
 
 // Create your MCP server
 const server = new McpServer({
-  name: 'email-module',
-  version: '1.0.0',
+    name: 'email-module',
+    version: '1.0.0'
 });
 
 // Register a tool
 server.tool(
-  'send-email',
-  'Send an email',
-  {
-    to: validators.email(),
-    subject: validators.nonEmptyString(),
-    body: z.string(),
-  },
-  async (args, extra) => {
-    // Extract Odel context (userId, secrets, etc.)
-    const ctx = extractToolContext(extra.requestBody, process.env);
+    'send-email',
+    'Send an email',
+    {
+        to: validators.email(),
+        subject: validators.nonEmptyString(),
+        body: z.string()
+    },
+    async (args, extra) => {
+        // Extract Odel context (userId, secrets, etc.)
+        const ctx = extractToolContext(extra.requestBody, process.env);
 
-    // Get required secrets
-    const apiKey = getRequiredSecret(ctx, 'RESEND_API_KEY');
+        // Get required secrets
+        const apiKey = getRequiredSecret(ctx, 'RESEND_API_KEY');
 
-    try {
-      // Your implementation here
-      const result = await sendEmail(apiKey, args);
+        try {
+            // Your implementation here
+            const result = await sendEmail(apiKey, args);
 
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              success: true,
-              messageId: result.id,
-              sentAt: new Date().toISOString(),
-            }),
-          },
-        ],
-      };
-    } catch (error) {
-      throw ModuleError.apiError('Failed to send email', {
-        originalError: error.message,
-      });
+            return {
+                content: [
+                    {
+                        type: 'text',
+                        text: JSON.stringify({
+                            success: true,
+                            messageId: result.id,
+                            sentAt: new Date().toISOString()
+                        })
+                    }
+                ]
+            };
+        } catch (error) {
+            throw ModuleError.apiError('Failed to send email', {
+                originalError: error.message
+            });
+        }
     }
-  }
 );
 ```
 
@@ -113,31 +107,31 @@ All Odel-specific utilities are available from `@odel/module-sdk/odel`:
 
 ```typescript
 import {
-  // Context
-  extractContext,
-  createToolContext,
-  extractToolContext,
-  getRequiredSecret,
-  getOptionalSecret,
-  DEFAULT_MODULE_CONTEXT,
+    // Context
+    extractContext,
+    createToolContext,
+    extractToolContext,
+    getRequiredSecret,
+    getOptionalSecret,
+    DEFAULT_MODULE_CONTEXT,
 
-  // Types
-  type ModuleContext,
-  type ToolContext,
-  type RequestBodyWithContext,
+    // Types
+    type ModuleContext,
+    type ToolContext,
+    type RequestBodyWithContext,
 
-  // Errors
-  ModuleError,
-  ErrorCode,
+    // Errors
+    ModuleError,
+    ErrorCode,
 
-  // Validators
-  validators,
+    // Validators
+    validators,
 
-  // Schemas
-  SuccessResponseSchema,
-  SimpleSuccessSchema,
-  type SuccessResponse,
-  type ErrorResponse,
+    // Schemas
+    SuccessResponseSchema,
+    SimpleSuccessSchema,
+    type SuccessResponse,
+    type ErrorResponse
 } from '@odel/module-sdk/odel';
 ```
 
@@ -149,12 +143,12 @@ The Odel platform injects context into every module request, including user info
 
 ```typescript
 interface ModuleContext {
-  userId: string; // Hashed user ID (privacy-preserving)
-  conversationId?: string; // Optional conversation ID
-  displayName?: string; // User's display name
-  timestamp: number; // Request timestamp
-  requestId: string; // Unique request identifier
-  secrets: Record<string, string>; // Decrypted user secrets
+    userId: string; // Hashed user ID (privacy-preserving)
+    conversationId?: string; // Optional conversation ID
+    displayName?: string; // User's display name
+    timestamp: number; // Request timestamp
+    requestId: string; // Unique request identifier
+    secrets: Record<string, string>; // Decrypted user secrets
 }
 ```
 
@@ -164,7 +158,7 @@ For Cloudflare Workers, `ToolContext<Env>` extends `ModuleContext` with typed en
 
 ```typescript
 interface ToolContext<Env> extends ModuleContext {
-  env: Env; // Cloudflare Worker bindings
+    env: Env; // Cloudflare Worker bindings
 }
 ```
 
@@ -191,13 +185,13 @@ Standardized error codes and a `ModuleError` class for consistent error response
 
 #### Error Codes
 
-| Range | Category   | Codes                                                                   |
-| ----- | ---------- | ----------------------------------------------------------------------- |
-| 1xxx  | Validation | `INVALID_INPUT`, `MISSING_REQUIRED_FIELD`, `INVALID_FORMAT`             |
-| 2xxx  | Auth       | `MISSING_SECRET`, `INVALID_SECRET`, `UNAUTHORIZED`                      |
-| 3xxx  | API        | `API_ERROR`, `NETWORK_ERROR`, `TIMEOUT`, `NOT_FOUND`                    |
-| 4xxx  | Rate Limit | `RATE_LIMIT_EXCEEDED`, `QUOTA_EXCEEDED`                                 |
-| 5xxx  | Internal   | `INTERNAL_ERROR`, `NOT_IMPLEMENTED`, `CONFIGURATION_ERROR`              |
+| Range | Category   | Codes                                                       |
+| ----- | ---------- | ----------------------------------------------------------- |
+| 1xxx  | Validation | `INVALID_INPUT`, `MISSING_REQUIRED_FIELD`, `INVALID_FORMAT` |
+| 2xxx  | Auth       | `MISSING_SECRET`, `INVALID_SECRET`, `UNAUTHORIZED`          |
+| 3xxx  | API        | `API_ERROR`, `NETWORK_ERROR`, `TIMEOUT`, `NOT_FOUND`        |
+| 4xxx  | Rate Limit | `RATE_LIMIT_EXCEEDED`, `QUOTA_EXCEEDED`                     |
+| 5xxx  | Internal   | `INTERNAL_ERROR`, `NOT_IMPLEMENTED`, `CONFIGURATION_ERROR`  |
 
 #### Factory Methods
 
@@ -248,34 +242,34 @@ import { validators } from '@odel/module-sdk/odel';
 import { z } from 'zod';
 
 const inputSchema = z.object({
-  // Email validation
-  email: validators.email(),
-  recipients: validators.emailList(), // Array or comma-separated string
+    // Email validation
+    email: validators.email(),
+    recipients: validators.emailList(), // Array or comma-separated string
 
-  // URL validation
-  website: validators.url(), // http or https
-  webhook: validators.httpsUrl(), // https only
+    // URL validation
+    website: validators.url(), // http or https
+    webhook: validators.httpsUrl(), // https only
 
-  // API keys
-  apiKey: validators.apiKey(), // Min 10 chars
-  openaiKey: validators.apiKey('sk-'), // With prefix
+    // API keys
+    apiKey: validators.apiKey(), // Min 10 chars
+    openaiKey: validators.apiKey('sk-'), // With prefix
 
-  // Strings
-  name: validators.nonEmptyString(),
-  bio: validators.trimmedString(), // Auto-trims, rejects empty
-  title: validators.boundedString(1, 100), // Length constraints
-  nickname: validators.optionalString(), // Empty string → undefined
+    // Strings
+    name: validators.nonEmptyString(),
+    bio: validators.trimmedString(), // Auto-trims, rejects empty
+    title: validators.boundedString(1, 100), // Length constraints
+    nickname: validators.optionalString(), // Empty string → undefined
 
-  // Numbers
-  count: validators.positiveInt(), // > 0, integer
-  offset: validators.nonNegativeInt(), // >= 0, integer
-  port: validators.port(), // 1-65535
+    // Numbers
+    count: validators.positiveInt(), // > 0, integer
+    offset: validators.nonNegativeInt(), // >= 0, integer
+    port: validators.port(), // 1-65535
 
-  // Other
-  id: validators.uuid(),
-  createdAt: validators.isoDate(), // ISO 8601 datetime
-  status: validators.enumFrom(['draft', 'published', 'archived'] as const),
-  config: validators.json<{ enabled: boolean }>(), // Parse JSON string
+    // Other
+    id: validators.uuid(),
+    createdAt: validators.isoDate(), // ISO 8601 datetime
+    status: validators.enumFrom(['draft', 'published', 'archived'] as const),
+    config: validators.json<{ enabled: boolean }>() // Parse JSON string
 });
 ```
 
@@ -289,10 +283,10 @@ import { z } from 'zod';
 
 // Define a response schema with data fields
 const EmailResponseSchema = SuccessResponseSchema(
-  z.object({
-    messageId: z.string(),
-    sentAt: z.string(),
-  })
+    z.object({
+        messageId: z.string(),
+        sentAt: z.string()
+    })
 );
 
 // Type inference
@@ -302,11 +296,11 @@ type EmailResponse = z.infer<typeof EmailResponseSchema>;
 
 // Usage with type narrowing
 function handleResponse(response: EmailResponse) {
-  if (response.success) {
-    console.log(`Sent: ${response.messageId}`);
-  } else {
-    console.error(`Failed: ${response.error}`);
-  }
+    if (response.success) {
+        console.log(`Sent: ${response.messageId}`);
+    } else {
+        console.error(`Failed: ${response.error}`);
+    }
 }
 
 // Simple success/error without data

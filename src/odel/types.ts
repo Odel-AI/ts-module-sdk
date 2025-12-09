@@ -12,18 +12,18 @@
  * and extracted by the module SDK before passing to handlers.
  */
 export interface ModuleContext {
-	/** Hashed user ID (privacy-preserving, consistent per user) */
-	userId: string;
-	/** Hashed conversation ID (optional, for multi-turn context) */
-	conversationId?: string;
-	/** User's display name */
-	displayName?: string;
-	/** Unix timestamp in milliseconds when request was made */
-	timestamp: number;
-	/** UUID for request tracing and logging */
-	requestId: string;
-	/** Decrypted user secrets configured for this module */
-	secrets: Record<string, string>;
+    /** Hashed user ID (privacy-preserving, consistent per user) */
+    userId: string;
+    /** Hashed conversation ID (optional, for multi-turn context) */
+    conversationId?: string;
+    /** User's display name */
+    displayName?: string;
+    /** Unix timestamp in milliseconds when request was made */
+    timestamp: number;
+    /** UUID for request tracing and logging */
+    requestId: string;
+    /** Decrypted user secrets configured for this module */
+    secrets: Record<string, string>;
 }
 
 /**
@@ -48,8 +48,8 @@ export interface ModuleContext {
  * ```
  */
 export interface ToolContext<Env = unknown> extends ModuleContext {
-	/** Cloudflare Worker environment bindings */
-	env: Env;
+    /** Cloudflare Worker environment bindings */
+    env: Env;
 }
 
 /**
@@ -57,9 +57,9 @@ export interface ToolContext<Env = unknown> extends ModuleContext {
  * (primarily for testing or direct MCP client access)
  */
 export const DEFAULT_MODULE_CONTEXT: ModuleContext = {
-	userId: 'anonymous',
-	displayName: 'Anonymous User',
-	timestamp: Date.now(),
-	requestId: 'no-request-id',
-	secrets: {},
+    userId: 'anonymous',
+    displayName: 'Anonymous User',
+    timestamp: Date.now(),
+    requestId: 'no-request-id',
+    secrets: {}
 };

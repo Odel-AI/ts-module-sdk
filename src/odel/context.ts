@@ -14,12 +14,12 @@ import { DEFAULT_MODULE_CONTEXT, ModuleContext, ToolContext } from './types.js';
  * alongside the standard JSON-RPC fields.
  */
 export interface RequestBodyWithContext {
-	jsonrpc: '2.0';
-	id: string | number;
-	method: string;
-	params?: Record<string, unknown>;
-	/** Module context injected by mcp-proxy */
-	context?: Partial<ModuleContext>;
+    jsonrpc: '2.0';
+    id: string | number;
+    method: string;
+    params?: Record<string, unknown>;
+    /** Module context injected by mcp-proxy */
+    context?: Partial<ModuleContext>;
 }
 
 /**
@@ -39,24 +39,24 @@ export interface RequestBodyWithContext {
  * ```
  */
 export function extractContext(body: RequestBodyWithContext): ModuleContext {
-	const ctx = body.context;
+    const ctx = body.context;
 
-	if (!ctx) {
-		return {
-			...DEFAULT_MODULE_CONTEXT,
-			timestamp: Date.now(),
-			requestId: crypto.randomUUID(),
-		};
-	}
+    if (!ctx) {
+        return {
+            ...DEFAULT_MODULE_CONTEXT,
+            timestamp: Date.now(),
+            requestId: crypto.randomUUID()
+        };
+    }
 
-	return {
-		userId: ctx.userId ?? DEFAULT_MODULE_CONTEXT.userId,
-		conversationId: ctx.conversationId,
-		displayName: ctx.displayName ?? DEFAULT_MODULE_CONTEXT.displayName,
-		timestamp: ctx.timestamp ?? Date.now(),
-		requestId: ctx.requestId ?? crypto.randomUUID(),
-		secrets: ctx.secrets ?? {},
-	};
+    return {
+        userId: ctx.userId ?? DEFAULT_MODULE_CONTEXT.userId,
+        conversationId: ctx.conversationId,
+        displayName: ctx.displayName ?? DEFAULT_MODULE_CONTEXT.displayName,
+        timestamp: ctx.timestamp ?? Date.now(),
+        requestId: ctx.requestId ?? crypto.randomUUID(),
+        secrets: ctx.secrets ?? {}
+    };
 }
 
 /**
@@ -76,10 +76,10 @@ export function extractContext(body: RequestBodyWithContext): ModuleContext {
  * ```
  */
 export function createToolContext<Env>(moduleContext: ModuleContext, env: Env): ToolContext<Env> {
-	return {
-		...moduleContext,
-		env,
-	};
+    return {
+        ...moduleContext,
+        env
+    };
 }
 
 /**
@@ -105,7 +105,7 @@ export function createToolContext<Env>(moduleContext: ModuleContext, env: Env): 
  * ```
  */
 export function extractToolContext<Env>(body: RequestBodyWithContext, env: Env): ToolContext<Env> {
-	return createToolContext(extractContext(body), env);
+    return createToolContext(extractContext(body), env);
 }
 
 /**
@@ -125,11 +125,11 @@ export function extractToolContext<Env>(body: RequestBodyWithContext, env: Env):
  * ```
  */
 export function getRequiredSecret(context: ModuleContext, secretName: string): string {
-	const value = context.secrets[secretName];
-	if (!value) {
-		throw new Error(`Required secret "${secretName}" is not configured`);
-	}
-	return value;
+    const value = context.secrets[secretName];
+    if (!value) {
+        throw new Error(`Required secret "${secretName}" is not configured`);
+    }
+    return value;
 }
 
 /**
@@ -148,5 +148,5 @@ export function getRequiredSecret(context: ModuleContext, secretName: string): s
  * ```
  */
 export function getOptionalSecret(context: ModuleContext, secretName: string): string | undefined {
-	return context.secrets[secretName];
+    return context.secrets[secretName];
 }

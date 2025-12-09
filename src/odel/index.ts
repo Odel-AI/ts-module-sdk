@@ -22,11 +22,5 @@ export { SimpleSuccessSchema, SuccessResponseSchema } from './schemas.js';
 export type { ErrorResponse, SuccessResponse } from './schemas.js';
 
 // Context utilities
-export {
-	createToolContext,
-	extractContext,
-	extractToolContext,
-	getOptionalSecret,
-	getRequiredSecret,
-} from './context.js';
+export { createToolContext, extractContext, extractToolContext, getOptionalSecret, getRequiredSecret } from './context.js';
 export type { RequestBodyWithContext } from './context.js';
